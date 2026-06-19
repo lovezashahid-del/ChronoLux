@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — ChronoLux</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <a href="index.html" class="auth-logo" style="text-decoration: none; display: block; margin-bottom: 8px;">Chrono<span>Lux</span></a>
+      <p class="auth-subtitle">Sign in to shop premium timepieces</p>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Login</button>
+        <button class="auth-tab" data-tab="register">Register</button>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" required />
+        </div>
+        <p class="form-error" id="login-error"></p>
+        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+      </form>
+
+      <form id="register-form" style="display:none">
+        <div class="form-group">
+          <label for="register-name">Full Name</label>
+          <input type="text" id="register-name" placeholder="John Doe" required />
+        </div>
+        <div class="form-group">
+          <label for="register-email">Email</label>
+          <input type="email" id="register-email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label for="register-password">Password</label>
+          <input type="password" id="register-password" placeholder="Min. 6 characters" minlength="6" required />
+        </div>
+        <p class="form-error" id="register-error"></p>
+        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+      </form>
+
+      <div class="demo-hint">
+        Demo account: <strong>demo@chrono.com</strong> / <strong>demo123</strong>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (Auth.isLoggedIn()) {
+      window.location.href = 'index.html';
+    }
+
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const tabs = document.querySelectorAll('.auth-tab');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+        const isLogin = tab.dataset.tab === 'login';
+        loginForm.style.display = isLogin ? 'block' : 'none';
+        registerForm.style.display = isLogin ? 'none' : 'block';
+      });
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const error = document.getElementById('login-error');
+      const result = Auth.login(
+        document.getElementById('login-email').value.trim(),
+        document.getElementById('login-password').value
+      );
+      if (result.success) {
+        window.location.href = 'index.html';
+      } else {
+        error.textContent = result.message;
+        error.classList.add('show');
+      }
+    });
+
+    registerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const error = document.getElementById('register-error');
+      const result = Auth.register(
+        document.getElementById('register-name').value.trim(),
+        document.getElementById('register-email').value.trim(),
+        document.getElementById('register-password').value
+      );
+      if (result.success) {
+        window.location.href = 'index.html';
+      } else {
+        error.textContent = result.message;
+        error.classList.add('show');
+      }
+    });
+  </script>
+</body>
+</html>
